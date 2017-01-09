@@ -69,27 +69,33 @@ export default class RefreshableListView extends Component {
     }
 
     _onRefresh(PullRefresh,page){
-        var url = API.RECREATION.replace(/offset=0/,'offset='+page)
-        fetch(url)
-            .then((response)=> response.json())
-            .then(json => {
-                let data;
-                if(this.props.index !== 2){
-                    data = json.data.categories.category_list;
-                }else {
-                    data = json.T1348648517839;
-                }
-                data = data.concat(this.state.data);
-                this.setState({
-                    page:this.state.page+1,
-                    data:data,
-                    dataSource:this.state.dataSource.cloneWithRows(data)
-                });
+        if(this.props.index !==2){
+            setTimeout(()=>{
                 PullRefresh.onRefreshEnd()
-            })
-            .catch((error)=>{
-                console.log(error)
-            });
+            },2000);
+        }else {
+            var url = API.RECREATION.replace(/offset=0/,'offset='+page)
+            fetch(url)
+                .then((response)=> response.json())
+                .then(json => {
+                    let data;
+                    if(this.props.index !== 2){
+                        data = json.data.categories.category_list;
+                    }else {
+                        data = json.T1348648517839;
+                    }
+                    data = data.concat(this.state.data);
+                    this.setState({
+                        page:this.state.page+1,
+                        data:data,
+                        dataSource:this.state.dataSource.cloneWithRows(data)
+                    });
+                    PullRefresh.onRefreshEnd()
+                })
+                .catch((error)=>{
+                    console.log(error)
+                });
+        }
     }
 
     render(){
